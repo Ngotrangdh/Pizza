@@ -1,0 +1,17 @@
+{% extends "orders/base.html" %} {% load crispy_forms_tags %} {% block body %}
+<div class="row justify-content-center">
+    <div class="col-6 mt-5 bg-light">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend>Log In</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-secondary" type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

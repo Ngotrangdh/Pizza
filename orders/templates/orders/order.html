@@ -1,0 +1,58 @@
+{% extends "orders/base.html" %}
+{% block body %}
+<h3>Thank you for purchasing!</h3>
+<div>
+    <p class="mt-3">To see the status of your orders
+        <a href="{% url 'order_history' %}">Click here</a>
+    </p>
+</div>
+<div class="border rounded mt-5">
+    <h4 class="m-5 text-center">Order Summary</h4>
+    <h5> Reference Number: #{{ ref_code }}</h5>
+    <table class="table">
+        <thead class="bg-light">
+            <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Size</th>
+                <th scope="col">Toppings</th>
+                <th scope="col">Addons</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.item.product.name }} -
+                    {{ item.item.variant }}</td>
+                <td>{{ item.item.size }}</td>
+                <td>
+                    <ul>
+                        {% for topping in item.toppings.all %}
+                        <li>{{ topping.name}}</li>
+                        {% endfor%}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for addon in item.addons.all %}
+                        <li>{{ addon.variant }}</li>
+                        {% endfor%}
+                    </ul>
+                </td>
+                <td>
+                    {{ item.quantity }}
+                </td>
+                <td>{{ item.get_unit_price }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th class="text-right" colspan="5">Total</td>
+                <td>{{ total|floatformat:2 }}</td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "orders/base.html" %} {% block body %}
+<h1>Menu</h1>
+<table class="table">
+    {% for product in products %}
+    <thead class="thead-light">
+        <tr>
+            <th>{{ product.name }}</th>
+            {% if product.is_one_size %}
+            <th class="px-4" colspan="2">One Size</th>
+            {% else %}
+            <th class="px-4">Small</th>
+            <th class="px-4">Large</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for variant in product.variants %}
+        {% if not variant.is_addon %}
+        <tr>
+            <td>{{ variant.variant }}</td>
+            {% if variant.onesize != None %}
+            <td colspan="2">
+                <button
+                    class="btn btn-light"
+                    data-variantid="{{ variant.onesize.id }}"
+                    data-variantname="{{ product.name }} {{ variant.variant }}"
+                    data-topping="{{ variant.topping_no }}"
+                    data-toggle="modal"
+                    data-target={{ variant.modal_name }}>
+                    {{ variant.onesize.price }}
+                </button>
+            </td>
+            {% else %}
+            {% if variant.small != None %}
+            <td>
+                <button
+                    class="btn btn-light"
+                    data-variantid="{{ variant.small.id }}"
+                    data-variantname="{{ product.name }} {{ variant.variant }}"
+                    data-topping="{{ variant.topping_no }}"
+                    data-toggle="modal"
+                    data-target={{ variant.modal_name }}>
+                    {{ variant.small.price }}
+                </button>
+            </td>
+            {% if variant.large == None %}
+            <td></td>
+            {% endif %}
+            {% endif %}
+            {% if variant.large != None %}
+            {% if variant.small == None %}
+            <td></td>
+            {% endif %}
+            <td>
+                <button
+                    class="btn btn-light"
+                    data-variantid="{{ variant.large.id }}"
+                    data-variantname="{{ product.name }} {{ variant.variant}}"
+                    data-topping="{{ variant.topping_no }}"
+                    data-toggle="modal"
+                    data-target={{ variant.modal_name }}>
+                    {{ variant.large.price }}
+                </button>
+            </td>
+            {% endif %}
+            {% endif %}
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    {% endfor %}
+</table>
+
+<!--  pizza topping modal -->
+<div class="modal fade" id="pizzaToppingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Item Options</div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="variantName"></h5>
+                            <h5 class="variantPrice"></h5>
+                            <div class="text-danger"
+                                id="exceedNumberToppingError"></div>
+                        </div>
+                        <div class="col-md-6 border-left">
+                            {% for topping in toppings %}
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="topping"
+                                    value="{{ topping.id }}"
+                                    id="{{ topping.name }}"
+                                    />
+                                <label
+                                    class="form-check-label"
+                                    for="{{ topping.name }}">
+                                    {{ topping.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-dismiss="modal">Close</button>
+                <button
+                    type="submit"
+                    class="btn btn-primary AddToCartButton"
+                    data-dismiss="modal">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- non pizza topping modal -->
+<div class="modal fade" id="nonPizzaToppingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Item Options</div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="variantName">Hello</h5>
+                            <h5 class="variantPrice">Hello</h5>
+                            <div class="text-danger"
+                                id="exceedNumberToppingError"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary AddToCartButton"
+                    data-dismiss="modal">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- sub model -->
+<div class="modal fade" id="subModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Item Options</div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="variantName"></h5>
+                            <h5 class="variantPrice"></h5>
+                            <div class="text-danger"
+                                id="exceedNumberToppingError"></div>
+                        </div>
+                        <div class="col-md-8 border-left">
+                            {% for product in products %}
+                            {% for variant in product.variants %}
+                            {% if variant.is_addon %}
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="addon"
+                                    value="{{ variant.small.id }}"
+                                    id="addon_{{ variant.small.id }}"
+                                    />
+                                <label
+                                    class="form-check-label"
+                                    for="addon_{{ variant.small.id }}">
+                                    {{ variant.variant }} +
+                                    {{ variant.small.price}}
+                                </label>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary AddToCartButton"
+                    data-dismiss="modal">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

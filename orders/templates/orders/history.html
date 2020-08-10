@@ -1,0 +1,71 @@
+{% extends "orders/base.html" %}
+{% block body %}
+
+<h3 class="text-center">Your Order History</h3>
+
+{% for order in orders reversed %}
+<div class="border rounded mt-5 p-5 bg-light">
+    <h4 class="text-center mb-5">Order #{{ order.ref_code }}</h4>
+    <div class="progress">
+        {% if order.status == "r" %}
+        <div class="progress-bar bg-info w-25" role="progressbar">
+            Received
+        </div>
+        {% elif order.status == "p" %}
+        <div class="progress-bar bg-info w-50" role="progressbar">
+            Pendding
+        </div>
+        {% else %}
+        <div class="progress-bar bg-info w-100" role="progressbar">
+            Done
+        </div>
+        {% endif %}
+    </div>
+    <table class="table mt-5">
+        <thead class="bg-light">
+            <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Size</th>
+                <th scope="col">Toppings</th>
+                <th scope="col">Addons</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.get_items %}
+            <tr>
+                <td>{{ item.item.product.name }} -
+                    {{ item.item.variant }}</td>
+                <td>{{ item.item.size }}</td>
+                <td>
+                    <ul>
+                        {% for topping in item.toppings.all %}
+                        <li>{{ topping.name}}</li>
+                        {% endfor%}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for addon in item.addons.all %}
+                        <li>{{ addon.variant }} + {{ addon.price }}</li>
+                        {% endfor%}
+                    </ul>
+                </td>
+                <td>
+                    {{ item.quantity }}
+                </td>
+                <td>{{ item.get_unit_price }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th class="text-right" colspan="5">Total</td>
+                <td>{{ order.get_total }}</td>
+                <!-- |floatformat:2 -->
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+{% endblock %}
